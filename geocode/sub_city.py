@@ -2,7 +2,7 @@ import pandas as pd
 import re
 from termcolor import cprint
 from geocode import geo_data,geo_subject
-
+import codecs
 
 def url_serarch(filename=r'', sheet=''):
     '''
@@ -13,7 +13,7 @@ def url_serarch(filename=r'', sheet=''):
     '''
     result=[]   # Результирующий список
     tab = pd.read_excel(filename, sheet_name=sheet)[['Ссылка на источник информации']]    #Выгрузка столбца из эксель через пандас
-    pat=r'https://rosrealt\.ru/([\w-]+)/'
+    pat=r'youla\.ru/([\w-]+)/'
     for i in range(len(tab)):
         temp_res=re.findall(pat,tab.loc[i]['Ссылка на источник информации'])            #поиск в каждой строке по шаблону регулярки
         if temp_res:                                                                    # Если что-то найдено добавить в результирующий списко
@@ -25,7 +25,6 @@ def url_serarch(filename=r'', sheet=''):
 
 """ Выгрузка из текстового файла (данных 1С)  по которым находятся в шаблонах ПСОД города для сравнения городов,
     которые учтены в 1С и тех по котороым не находится субъект 
-
     c1_dict=[]                              #
     with open(r"1C.txt") as read_file:
         pat1=r'\"/([\w-]+)\"'
@@ -40,7 +39,6 @@ def url_serarch(filename=r'', sheet=''):
     c1_dict=dict(c1_dict)
     print (c1_dict)
     c1_set={i for i in c1_dict}
-
 raz=result-c1_set # Разница в уникальных значениях ссылок
 cprint(len(raz),'red')
 """
@@ -51,9 +49,10 @@ def dict_1c():
     Выгрузка из текстового файла (данных словаря 1С) значений субъектов в формате 1С
     :return:
     '''
-    with open(r"subject_1c.txt") as read_file:
-        sub_list=[i.rstrip() for i in read_file.readlines()]
-        return sub_list
+    fileObj = codecs.open("subject_1c.txt", "r", "utf_8_sig") #Перестал читать данные из файла (руский шрифт)
+    sub_list= [ i.strip() for i in fileObj]                   #Пришлось применить import codecs
+    fileObj.close()
+    return sub_list
 
 def search_sub(city,dict):
     '''
@@ -70,7 +69,7 @@ def search_sub(city,dict):
         srch= geo_subject(city=i).split()[0]
         res=''
         for j in dict:
-            if j.find(srch)>-1:
+            if j.find(srch)>-1: #Если субъект из списка городов  которые вернул яндекс нашелся в списке субъектов 1С тогда
                res = ('ИначеЕсли СтрНайти(ССЫЛКА_ИСТОЧНИКА, "/{}") Тогда Результат = "{}";'.format(i,j))
         if res:
             print(res)
