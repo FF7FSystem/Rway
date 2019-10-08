@@ -35,12 +35,12 @@ def geo_subject(city,keys=['25d93e53-6cba-4529-a36b-9d602d13a749']):
         cprint((e,'Для региона: '+ city+' не найден субъект'),'green')
         result='Noresult'
 
+    #Если не сделать это условие то яндекс возврящает "Тюменская обл", что не верно.
+    if result =='Тюменская область'   and   city == 'hanty-mansiysk':
+        result = 'Ханты-Мансийский Автономный округ - Югра АО'
+    return(result)
+
     return(result)
 
 if __name__ == "__main__":
     geo_data(city='maykop',)
-
-
-
-
-
