@@ -1,0 +1,816 @@
+{
+  "_task_id": "SCREENS",
+  "project_id": "metaspider",
+  "spider_id": "metacrawler",
+  "global_settings": {
+    "CONCURRENT_REQUESTS": 64,
+    "SPLASH_URL": "http://0.0.0.0:8050",
+    "LOG_LEVEL": "INFO",
+    "AUTOTHROTTLE_ENABLED": true,
+    "AUTOTHROTTLE_START_DELAY": 1,
+    "AUTOTHROTTLE_MAX_DELAY": 60,
+    "AUTOTHROTTLE_TARGET_CONCURRENCY": 64,
+    "CONCURRENT_REQUESTS_PER_DOMAIN": 64,
+    "RETRY_ENABLED": true,
+    "RETRY_HTTP_CODES": [
+      400,
+      401,
+      403,
+      405,
+      406,
+      407,
+      408,
+      409,
+      411,
+      412,
+      413,
+      414,
+      415,
+      416,
+      417,
+      418,
+      426,
+      428,
+      429,
+      431,
+      434,
+      444,
+      451,
+      499,
+      500,
+      501,
+      502,
+      503,
+      504,
+      505,
+      506,
+      507,
+      508,
+      509,
+      510,
+      511,
+      598,
+      599,
+      800
+    ],
+    "HTTPERROR_ALLOWED_CODES": [
+      404,
+      410
+    ],
+    "RETRY_TIMES": 10,
+    "ROBOTSTXT_ENABLED": false,
+    "ROBOTSTXT_OBEY": false,
+    "REDIRECT_ENABLED": true,
+    "COOKIES_ENABLED": true,
+    "DOWNLOAD_FAIL_ON_DATALOSS": false,
+    "RANDOM_UA_TYPE": "random",
+    "DOWNLOAD_TIMEOUT": 90,
+    "CLOSESPIDER_ITEMCOUNT": 0,
+    "CLOSESPIDER_ERRORCOUNT": 0,
+    "RUN_ACTUALITY_CHECK": true,
+    "SKIP_PROCESSED_URLS": false,
+    "ACTUALITY_OFFSET_HOURS": 3,
+    "ACTUALITY_TASK_ID": ["task_id_1", "task_id_2"]
+  },
+  "methods": {
+    "crawling_type": "common",
+    "filter_duplicates": true,
+    "allowed_domains": [],
+    "proxy_settings": {
+      "types": [
+        "https"
+      ],
+      "amount": 10000,
+      "save": false
+    }
+  },
+  "actuality_check": {
+    "regs": {
+      "rosrealt.ru": {
+        "expr": [
+          "Отправить сообщение автору объявления"
+        ],
+        "exprn": [
+          "Объявление было скрыто или удалено"
+        ],
+        "host_url": "https://rosrealt.ru/"
+      },
+      "mohouse.ru": {
+        "expr": [
+          "title-price"
+        ],
+        "exprn": "",
+        "host_url": "http://mohouse.ru/"
+      },
+      "arendator.ru": {
+        "expr": [
+          "ask_phone(event, 'offers'"
+        ],
+        "exprn": "",
+        "host_url": "https://www.arendator.ru/"
+      },
+      "rosnedv.ru": {
+        "expr": [
+          "Описание от продавца"
+        ],
+        "exprn": [
+          "Запрашиваемая вами страница не найдена"
+        ],
+        "host_url": "https://www.rosnedv.ru/",
+        "methods": {
+          "proxy_settings": {
+            "countries": [
+              "RU",
+              "KZ",
+              "UA",
+              "BY"
+            ]
+          }
+        }
+      },
+      "raui.ru": {
+        "expr": [
+          "padding: 10px 0; background: #7edcaa; margin-top: 5px; text-align: center; color: #000;"
+        ],
+        "exprn": [
+          "form form-inline withoutBootstrapValidator search",
+          "страница не найдена"
+        ],
+        "host_url": "https://raui.ru/",
+        "js": "closePopup()"
+      },
+      "ryazanhouse.ru": {
+        "expr": [
+          "nov-tgb-layout l-25"
+        ],
+        "exprn": [
+          "Объявление было удалено"
+        ],
+        "host_url": "http://ryazanhouse.ru/"
+      },
+      "ayax.ru": {
+        "expr": [
+          "object__price"
+        ],
+        "exprn": [
+          "снят с продажи"
+        ],
+        "host_url": "https://www.ayax.ru/"
+      },
+      "ndv31.ru": {
+        "expr": [
+          "object--left"
+        ],
+        "exprn": "",
+        "host_url": "http://ndv31.ru/"
+      },
+      "tvoyadres.ru": {
+        "expr": [
+          "Дата публикации"
+        ],
+        "exprn": [
+          "Страница не найдена",
+          "button primary"
+        ],
+        "host_url": "https://tvoyadres.ru/"
+      },
+      "bizzona.ru": {
+        "expr": [
+          "panel-body panel-offer in-offer-page"
+        ],
+        "exprn": "",
+        "host_url": "http://bizzona.ru/"
+      },
+      "gradstroy35.ru": {
+        "expr": [
+          "offer-main"
+        ],
+        "exprn": "",
+        "host_url": "https://gradstroy35.ru/"
+      },
+      "torgi.gov.ru": {
+        "expr": [
+          "<span>Объявлен</span>"
+        ],
+        "exprn": [
+          "Завершение торгов"
+        ],
+        "host_url": "https://torgi.gov.ru/index.html"
+      },
+      "avito.ru": {
+        "expr": [
+          "title-info-title-text",
+          "add-favorite-button-text"
+        ],
+        "exprn": [
+          "button button-origin is-active",
+          "Оно более не актуально",
+          "Срок размещения этого объявления истёк"
+        ],
+        "host_url": "https://www.avito.ru/rossiya",
+        "js": "document.querySelector('div[data-placement=\"bottom\"]').style.display = 'none'"
+      },
+      "doma-24.ru": {
+        "expr": [
+          "Дополнительная информация"
+        ],
+        "exprn": [
+          "Объявление не существует"
+        ],
+        "host_url": "http://www.doma.ru/"
+      },
+      "upn.ru": {
+        "expr": [
+          "ctl00_VOI_pnInfo"
+        ],
+        "exprn": "",
+        "host_url": "https://upn.ru/"
+      },
+      "move.ru": {
+        "expr": [
+          "object-page__user-block",
+            "block-user__name"
+        ],
+        "exprn": [
+          "Данное объявление было снято с публикации автором или срок его подачи истек",
+          "Данный объект продан"
+        ],
+        "host_url": "https://move.ru/"
+      },
+      "realtymag.ru": {
+        "expr": [
+          "offer-detail__info-block"
+        ],
+        "exprn": [
+          "Запрошенная Вами страница была удалена",
+          "Ещё опции"
+        ],
+        "host_url": "https://www.realtymag.ru/"
+      },
+      "realty.dmir.ru": {
+        "expr": [
+          "price_offer"
+        ],
+        "exprn": [
+          "Объявление не актуально"
+        ],
+        "host_url": "https://spb.cian.ru/"
+      },
+      "irk.ru": {
+        "expr": [
+          "wrapping-td"
+        ],
+        "exprn": "",
+        "host_url": "https://realty.irk.ru/"
+      },
+      "home29.ru": {
+        "expr": [
+          "heading_Prop"
+        ],
+        "exprn": "",
+        "host_url": "http://www.home29.ru/"
+      },
+      "olymprealty.ru": {
+        "expr": [
+          "Подробная информация"
+        ],
+        "exprn": [
+          "По вашему запросу ничего не найдено"
+        ],
+        "host_url": "http://olymprealty.ru/"
+      },
+      "bizsold.ru": {
+        "expr": [
+          "show_business clearfix"
+        ],
+        "exprn": "",
+        "host_url": "http://bizsold.ru/"
+      },
+      "bazametrov.ru": {
+        "expr": [
+          "block-item boxphone"
+        ],
+        "exprn": [
+          "Запрашиваемая Вами страница не существует"
+        ],
+        "host_url": "https://bazametrov.ru/"
+      },
+      "dom45.ru": {
+        "expr": [
+          "span12 price"
+        ],
+        "exprn": "",
+        "host_url": "https://dom45.ru/"
+      },
+      "gde.ru": {
+        "expr": [
+          "show-tel",
+          "write-msg"
+        ],
+        "exprn": [
+          "Данной страницы на этом сайте нет"
+        ],
+        "host_url": "https://gde.ru/"
+      },
+      "multilisting.su": {
+        "expr": [
+          "btn btn-success ShowAdvPhone"
+        ],
+        "exprn": [
+          "form form-inline withoutBootstrapValidator search",
+          "fa fa-search fa-l"
+        ],
+        "host_url": "https://multilisting.su/"
+      },
+      "kalugahouse.ru": {
+        "expr": [
+          "nov-tgb-layout l-25"
+        ],
+        "exprn": [
+          "Объявление было удалено"
+        ],
+        "host_url": "https://kalugahouse.ru/"
+      },
+      "farpost.ru": {
+        "expr": [
+          "Показать контакты"
+        ],
+        "exprn": [
+          "Объявление устарело"
+        ],
+        "host_url": "https://www.farpost.ru/moskva/"
+      },
+      "sakh.com": {
+        "expr": [
+          "Это ваша компания?"
+        ],
+        "exprn": [
+          "Страница не найдена",
+          "Объявление отключено",
+          "Объявление из архива"
+        ],
+        "host_url": "https://sakh.com/"
+      },
+      "vladimirhouse.ru": {
+        "expr": [
+          "nov-tgb-layout l-25"
+        ],
+        "exprn": [
+          "Объявление было удалено"
+        ],
+        "host_url": "http://vladimirhouse.ru/"
+      },
+      "biztorg.ru": {
+        "expr": [
+          "block2 contacts"
+        ],
+        "exprn": "",
+        "host_url": "http://biztorg.ru/"
+      },
+      "citystar.ru": {
+        "expr": [
+          "YPeoplesMapScheme"
+        ],
+        "exprn": "",
+        "host_url": "http://citystar.ru/"
+      },
+      "theproperty.ru": {
+        "expr": [
+          "contact-info"
+        ],
+        "exprn": [
+          "находится в архиве"
+        ],
+        "host_url": "https://theproperty.ru/"
+      },
+      "ners.ru": {
+        "expr": [
+          "card-block notes_view"
+        ],
+        "exprn": [
+          "Объявление не найдено"
+        ],
+        "host_url": "https://ners.ru/",
+        "exprn_codes": [
+          500
+        ]
+      },
+      "domovoy45.ru": {
+        "expr": [
+          "span12 price"
+        ],
+        "exprn": "страница не найдена",
+        "host_url": "https://dom45.ru/"
+      },
+      "realty.yandex.ru": {
+        "expr": [
+          "OfferPhoneButton OfferPhoneButton_wide"
+        ],
+        "exprn": [
+          "Страница не найдена",
+          "Объявление устарело"
+        ],
+        "host_url": "https://realty.yandex.ru/"
+      },
+      "aliant.pro": {
+        "expr": [
+          "subTitle"
+        ],
+        "exprn": "",
+        "host_url": "https://aliant.pro/"
+      },
+      "nmls.ru": {
+        "expr": [
+          "card-center-col"
+        ],
+        "exprn": "",
+        "host_url": "http://tver.nmls.ru/"
+      },
+      "lg29.ru": {
+        "expr": [
+          "yellow-button"
+        ],
+        "exprn": "",
+        "host_url": "https://lg29.ru/#/table//"
+      },
+      "e1.ru": {
+        "expr": [
+          "Показать телефон"
+        ],
+        "exprn": "[в архиве]",
+        "host_url": "https://www.e1.ru/"
+      },
+      "realtyvision.ru": {
+        "expr": [
+          "Написать автору"
+        ],
+        "exprn": [
+          "Данная страница не существует"
+        ],
+        "host_url": "https://www.realtyvision.ru/"
+      },
+      "youla.ru": {
+        "expr": [
+          "isPublished\":true"
+        ],
+        "exprn": [
+          "isSold\":true ",
+          "isReserved\":true",
+          "isDeleted\":true",
+          "isArchived\":true",
+          "isExpiring\":true",
+          "isBlocked\":true"
+        ],
+        "host_url": "https://youla.ru/"
+      },
+      "tulahouse.ru": {
+        "expr": [
+          "nov-tgb-layout l-25"
+        ],
+        "exprn": [
+          "Объявление было удалено"
+        ],
+        "host_url": "http://tulahouse.ru/"
+      },
+      "delomart.ru": {
+        "expr": [
+          "property-detail"
+        ],
+        "exprn": "",
+        "host_url": "http://delomart.ru/"
+      },
+      "domchel.ru": {
+        "expr": [
+          "contacts:show"
+        ],
+        "exprn": "",
+        "host_url": "https://chelyabinsk.n1.ru/"
+      },
+      "irr.ru": {
+        "expr": [
+          "y0q7tZFoqe8lzygJJ9BOP",
+          "icon icon_starEmpty js-iconFavorite"
+        ],
+        "exprn": [
+          "Объявление снято с публикации",
+          "Сменить регион"
+        ],
+        "host_url": "https://irr.ru/"
+      },
+      "brsn.ru": {
+        "expr": [
+          "TopShowObject"
+        ],
+        "exprn": "",
+        "host_url": "http://www.brsn.ru/"
+      },
+      "market.sakh.com": {
+        "expr": [
+          "div class=\"seller\""
+        ],
+        "exprn": "",
+        "host_url": "https://market.sakh.com/"
+      },
+      "advecs.com": {
+        "expr": [
+          "Связаться с агент"
+        ],
+        "exprn": "<div class=\"empty\"></div>",
+        "host_url": "https://www.advecs.com/"
+      },
+      "zdanie.info": {
+        "expr": [
+          "Контакты по объекту"
+        ],
+        "exprn": "",
+        "host_url": "https://zdanie.info/"
+      },
+      "business-asset.ru": {
+        "expr": [
+          "full-details"
+        ],
+        "exprn": "",
+        "host_url": "https://business-asset.com/ru/"
+      },
+      "rk-region.ru": {
+        "expr": [
+          "price-curr"
+        ],
+        "exprn": [
+          "Элемент не найден"
+        ],
+        "host_url": "https://rk-region.ru/"
+      },
+      "granta24.ru": {
+        "expr": [
+          "catalog-card__content"
+        ],
+        "exprn": "",
+        "host_url": "https://www.granta24.ru/"
+      },
+      "kvadrat64.ru": {
+        "expr": [
+          "thprice"
+        ],
+        "exprn": [
+          "Объявление было удалено"
+        ],
+        "host_url": "https://kvadrat64.ru/"
+      },
+      "doska.ru": {
+        "expr": [
+          "Распечатать"
+        ],
+        "exprn": [
+          "a_ru"
+        ],
+        "host_url": "https://www.doska.ru/"
+      },
+      "ndv.ru": {
+        "expr": [
+          "показать телефон"
+        ],
+        "exprn": "",
+        "host_url": "https://www.ndv.ru/"
+      },
+      "dom.vse42.ru": {
+        "expr": [
+          "omega cost-value"
+        ],
+        "exprn": "",
+        "host_url": "http://dom.vse42.ru/"
+      },
+      "bn.ru": {
+        "expr": [
+          "callback-widget__button callback-widget__button-phone"
+        ],
+        "exprn": [
+          "продавец не обновлял"
+        ],
+        "host_url": "https://www.bn.ru/"
+      },
+      "sibdom.ru": {
+        "expr": [
+          "показать телефон",
+          "card-banner-content"
+        ],
+        "exprn": [
+          "Реализация объекта недвижимости приостановлена"
+        ],
+        "host_url": "https://www.sibdom.ru/"
+      },
+      "mlsn.ru": {
+        "expr": [
+          "Показать контакты"
+        ],
+        "exprn": [
+          "Объявление находится в архиве"
+        ],
+        "host_url": "https://mlsn.ru/select_city.html"
+      },
+      "n1.ru": {
+        "expr": [
+          "offer-card-contacts__block",
+          "Показать телефон"
+        ],
+        "exprn": [
+          "объявление находится в архиве",
+          "Страница не найдена"
+        ],
+        "host_url": "https://salehard.n1.ru/"
+      },
+      "roszem.ru": {
+        "expr": [
+          "object-content"
+        ],
+        "exprn": "",
+        "host_url": "http://www.roszem.ru/"
+      },
+      "kvadrat.ru": {
+        "expr": [
+          "td class=hh"
+        ],
+        "exprn": [
+          "Объявление было удалено"
+        ],
+        "host_url": "http://www.kvadrat.ru/"
+      },
+      "cian.ru": {
+        "expr": [
+          "button_component-button-text-JxDJ68fq",
+          "Следить за изменением цены"
+        ],
+        "exprn": [
+          "Объявление снято с публикации"
+        ],
+        "host_url": "https://www.cian.ru/"
+      },
+      "vrx.ru": {
+        "expr": [
+          "viewtext"
+        ],
+        "exprn": [
+          "Заявка снята с продажи"
+        ],
+        "host_url": "https://www.vrx.ru/"
+      },
+      "tomsk.ru09.ru": {
+        "expr": [
+          "realty_detail_attrs"
+        ],
+        "exprn": [
+          "Объявление не существует"
+        ],
+        "host_url": "https://www.tomsk.ru09.ru/"
+      },
+      "alterainvest.ru": {
+        "expr": [
+          "new_cart new-style-cart"
+        ],
+        "exprn": "",
+        "host_url": "https://alterainvest.ru/"
+      },
+      "qp.ru": {
+        "expr": [
+          "Показать телефон"
+        ],
+        "exprn": [
+          "Ой, такой страницы не существует"
+        ],
+        "host_url": "https://moskva.qp.ru/"
+      },
+      "agent42.ru": {
+        "expr": [
+          "Контактное лицо"
+        ],
+        "exprn": "",
+        "host_url": "http://agent42.ru/"
+      },
+      "n30.ru": {
+        "expr": [
+          "strup3"
+        ],
+        "exprn": "",
+        "host_url": "https://n30.ru/"
+      },
+      "beboss.ru": {
+        "expr": [
+          "Показать телефон"
+        ],
+        "exprn": [
+          "Страница не найдена",
+          "объект в архиве"
+        ],
+        "host_url": "https://www.beboss.ru/"
+      },
+      "nedvizhka.ru": {
+        "expr": [
+          "tag big_price"
+        ],
+        "exprn": "",
+        "host_url": "https://www.nedvizhka.ru/"
+      },
+      "dom43.ru": {
+        "expr": [
+          "Показать телефон"
+        ],
+        "exprn": [
+          "Возможно, объект недвижимости уже продан, или у объявления закончился срок публикации"
+        ],
+        "host_url": "https://dom43.ru/"
+      },
+      "dom.yuga.ru": {
+        "expr": [
+          "date em2"
+        ],
+        "exprn": [
+          "объявление было снято с публикации"
+        ],
+        "host_url": "https://dom.yuga.ru/"
+      },
+      "gdeetotdom.ru": {
+        "expr": [
+          "price-block"
+        ],
+        "exprn": [
+          "Неактуальное объявление</div>",
+          "Объявление не найдено"
+        ],
+        "host_url": "https://www.gdeetotdom.ru/",
+        "exprn_codes": [
+          500
+        ]
+      },
+      "bcinform.ru": {
+        "expr": [
+          "Записаться на просмотр"
+        ],
+        "exprn": [
+          "Помещение сдано"
+        ],
+        "host_url": "https://bcinform.ru/"
+      },
+      "base.zem.ru": {
+        "expr": [
+          "b-content-main b-content-main_object product_card"
+        ],
+        "exprn": "",
+        "host_url": "http://base.zem.ru/"
+      },
+      "kn.ngs.ru": {
+        "expr": [
+          "contacts:show"
+        ],
+        "exprn": [
+          "card__header-status",
+          "Страница не найдена"
+        ],
+        "host_url": "https://kn.ngs.ru/"
+      },
+      "ya39.ru": {
+        "expr": [
+          "ads_body_1"
+        ],
+        "exprn": "",
+        "host_url": "https://ya39.ru/"
+      },
+      "ankvartal31.ru": {
+        "expr": [
+          "Заказать обратный"
+        ],
+        "exprn": "страница не найдена",
+        "host_url": "http://ankvartal31.ru/"
+      },
+      "life-realty.ru": {
+        "expr": [
+          "card_contacts_block"
+        ],
+        "exprn": [
+          "данное объявление устарело"
+        ],
+        "host_url": "http://life-realty.ru/"
+      },
+      "vestum.ru": {
+        "expr": [
+          "Описание от продавца"
+        ],
+        "exprn": "",
+        "host_url": "https://www.vestum.ru/"
+      },
+      "businessesforsale.ru": {
+        "expr": [
+          "contactSellerForm"
+        ],
+        "exprn": "",
+        "host_url": "http://businessesforsale.ru/"
+      },
+      "bbport.ru": {
+        "expr": [
+          "title mb_20"
+        ],
+        "exprn": "",
+        "host_url": "https://bbport.ru/"
+      }
+    }
+  }
+}
