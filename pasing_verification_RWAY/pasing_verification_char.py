@@ -95,11 +95,13 @@ async def task_full_info(prepare_data,for_connect):
     col_name с последующим создаванием словарей (Ключ = Имя колонки, значение = значение), путем  сопоставления двух списков
     колонок и ключей позиционно, что неочень хорошо.
     '''
-    col_name_char1=('Цена','Цена Предложения За 1 кв.м.','Размерность Стоимости','Продавец','Телефон Продавца','Общая Площадь Предложения',
-                 'Размерность Площади','Широта По Источнику','Долгота По Источнику','Заголовок','Улица','Дом',
-                 'Назначение Объекта Предложения Список','Дата Сбора Информации')
-    col_name_char2 = ('Адрес','ДатаРазмещения','НаселенныйПункт','Город','Описание','СамаяРанняяДатаРазмещения'
-                      'Сегмент','СсылкаИсточника','Субъект','ТипРынка','ТипСделки')
+    col_name_char1=(
+        'Цена','Цена Предложения За 1 кв.м.','Размерность Стоимости','Продавец','Телефон Продавца','Общая Площадь Предложения',
+        'Размерность Площади','Широта По Источнику','Долгота По Источнику','Заголовок','Способ Реализации','Этаж','Этажность',
+        'Тип объекта недвижимости','Предмет Сделки','Класс Объекта','Назначение Объекта Предложения','Дата Сбора Информации')
+    col_name_char2 = (
+        'Адрес','ДатаРазмещения','Описание','СамаяРанняяДатаРазмещения','Сегмент','Подсегмент','СсылкаИсточника','Субъект',
+        'ТипРынка','ТипСделки')
     try:
         try:
             #Запрос из бызы характеристик указанных в списке col_name_char1. Самый долгий запрос который блокирует обычную функцию на несколько минут
@@ -121,9 +123,13 @@ async def task_full_info(prepare_data,for_connect):
                     count(case when Наименование = 'Широта По Источнику' and Значение <> 0 then  1 end) 'Широта По Источнику',
                     count(case when Наименование = 'Долгота По Источнику' and Значение <> 0 then  1 end) 'Долгота По Источнику',
                     count(case when Наименование = 'Заголовок' and Значение <> 0 then  1 end) 'Заголовок',
-                    count(case when Наименование = '7.Улица' and Значение <> 0 then  1 end) 'Улица',
-                    count(case when Наименование = '8.Дом' and Значение <> 0 then  1 end) 'Дом',
-                    count(case when Наименование = 'Назначение Объекта Предложения Список' and Значение <> 0 then  1 end) 'Назначение Объекта Предложения Список',
+                    count(case when Наименование = 'Способ Реализации' and Значение <> 0 then  1 end) 'Способ Реализации',
+                    count(case when Наименование = 'Этаж' and Значение <> 0 then  1 end) 'Этаж',
+					count(case when Наименование = 'Количество Этажей' and Значение <> 0 then  1 end) 'Этажность',
+					count(case when Наименование = 'Тип объекта недвижимости' and Значение <> 0 then  1 end) 'Тип объекта недвижимости',
+					count(case when Наименование = 'Предмет Сделки' and Значение <> 0 then  1 end) 'Предмет Сделки',
+					count(case when Наименование = 'Класс Объекта' and Значение <> 0 then  1 end) 'Класс Объекта',
+                    count(case when Наименование = 'Назначение Объекта Предложения' and Значение <> 0 then  1 end) 'Назначение Объекта Предложения',
                     count(case when Наименование = 'Дата Сбора Информации' and Значение <> 0 then  1 end) 'Дата Сбора Информации'
             From
             (SELECT Предложение FROM [rway].[dbo].[_Task62] task left join [rway].[РегистрСведений].[ПредложенияЗадач] predl on _IDRRef = predl.Задача where _Fld198 = '{task_code}') num_pred
@@ -133,6 +139,7 @@ async def task_full_info(prepare_data,for_connect):
                     when Значение_Число > 0 then  1
                     when Значение_Строка <> '' then  1
                     when Значение_Дата is not null then  1
+                    when Значение <> 0x00000000000000000000000000000000 then  1
                 end Значение
 
                  from [rway].[РегистрСведений].[ЗначенияХарактеристик] Xap left join [rway].[ПВХ].[Характеристики] Xap_val on Xap.Характеристика = Xap_val.Ссылка) xap_tab_pred
@@ -149,16 +156,14 @@ async def task_full_info(prepare_data,for_connect):
             await cursor.execute(f'''
                 SELECT	count(case when [АдресПредставление] <> '' then  1 end) 'Адрес',
                         count(case when [ДатаРазмещения] is not null then  1 end) 'ДатаРазмещения',
-                        count(case when [НаселенныйПункт] <> '' then  1 end) 'НаселенныйПункт',
-                        count(case when [Город] <> '' then  1 end) 'Город',
                         count(case when [Описание] <> '' then  1 end) 'Описание',
                         count(case when [СамаяРанняяДатаРазмещения] is not null then  1 end) 'СамаяРанняяДатаРазмещения',
                         count(case when [Сегмент] = 0x00000000000000000000000000000000 then null else  1 end) 'Сегмент',
+						count(case when [Подсегмент] = 0x00000000000000000000000000000000 then null else  1 end) 'Подсегмент',
                         count(case when [СсылкаИсточника] <> '' then  1 end) 'СсылкаИсточника',
                         count(case when [Субъект] = 0x00000000000000000000000000000000 then null else  1 end) 'Субъект',
                         count(case when [ТипРынка] = 0x00000000000000000000000000000000 then null else  1 end) 'ТипРынка',
                         count(case when [ТипСделки] = 0x00000000000000000000000000000000 then null else  1 end) 'ТипСделки'
-
                 FROM [rway].[dbo].[_Task62] task
                 left join [rway].[Документ].[Задание] doc on task._Fld192RRef = doc.Ссылка and task._Fld231RRef=0xAB47107B44B1669011E990CEFFC204B6
                 left join [rway].[Справочник].[Источники] sourc on task._Fld197RRef = sourc.Ссылка
@@ -224,9 +229,9 @@ async def gobaby(task_list_prepare_data,for_connect):
 
     #Запись всех результатов полученных выше в файл json  и указанием даты и времени в имени файла
     time_now = (datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S"))
-    with open(r'C:\Users\user1\.PyCharmCE2019.3\config\scratches\async_items_({time}).json'.format(time=time_now), 'w', encoding='utf-8') as fp:
+    with open(r'C:\Users\user1\AppData\Roaming\JetBrains\PyCharmCE2020.1\scratches\parse_resilt_items\async_items_({}).json'.format(time_now), 'w', encoding='utf-8') as fp:
         json.dump(for_output, fp, ensure_ascii=False, indent=4)
-        print(r'Файл записан в C:\Users\user1\.PyCharmCE2019.3\config\scratches\async_items.json')
+        print(r'Файл записан в C:\Users\user1\.PyCharmCE2019.3\config\scratches\async_items_({}).json'.format(time_now))
 
     # печать в терминал функцией print_char_dict в нужном формате  всех полученых результатов  по задачам из результирующего сортированого списка
     for i in sorted(for_output, key=lambda x: x['Псевдоним']):
@@ -257,5 +262,5 @@ def main(task_num):
     print()
 
 if __name__ == "__main__":
-    prime_taks_name = '0001-0608'
+    prime_taks_name = '0001-0610'
     main(prime_taks_name)
