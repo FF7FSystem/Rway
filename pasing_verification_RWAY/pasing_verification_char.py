@@ -5,6 +5,7 @@ import datetime
 import asyncio
 from termcolor import cprint
 import json
+import pasing_print
 
 
 def print_char_dict(char_dict):
@@ -213,7 +214,6 @@ async def gobaby(task_list_prepare_data,for_connect):
     :return:   Ничего не возвращает
     '''
     begin = time.time() #условное время начала запуска скрипта
-
     futures = [task_full_info(args, for_connect) for args in task_list_prepare_data] #созадниае списка фьючерсов (функций, которые будут выполнены в асинхронном режиме)
     #Это и есть те финкии, которые будут получать данные о  качестве заполняемости по каждой задаче
     #В качестве аргументов передается параметры одной задачи из списка задач и свойства подключения в базе данных
@@ -232,10 +232,12 @@ async def gobaby(task_list_prepare_data,for_connect):
     with open(r'C:\Users\user1\AppData\Roaming\JetBrains\PyCharmCE2020.1\scratches\parse_resilt_items\async_items_({}).json'.format(time_now), 'w', encoding='utf-8') as fp:
         json.dump(for_output, fp, ensure_ascii=False, indent=4)
         print(r'Файл записан в C:\Users\user1\.PyCharmCE2019.3\config\scratches\async_items_({}).json'.format(time_now))
-
-    # печать в терминал функцией print_char_dict в нужном формате  всех полученых результатов  по задачам из результирующего сортированого списка
-    for i in sorted(for_output, key=lambda x: x['Псевдоним']):
-        print_char_dict(i)  #В функцию передается словарь, так как результирующий список for_output содержит список словарей
+    try:
+        pasing_print.main(for_output)
+    except Exception as e:
+        cprint(f'Ошибка в модуле pasing_print вот такая {e}','red')
+    # for i in sorted(for_output, key=lambda x: x['Псевдоним']):
+    #     print_char_dict(i)  #В функцию передается словарь, так как результирующий список for_output содержит список словарей
 
 def main(task_num):
     """
@@ -262,5 +264,5 @@ def main(task_num):
     print()
 
 if __name__ == "__main__":
-    prime_taks_name = '0001-0610'
+    prime_taks_name = '0001-0620'
     main(prime_taks_name)
