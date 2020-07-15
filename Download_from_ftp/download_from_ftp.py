@@ -33,6 +33,18 @@ def load_in_folder(source,files,ftp):
         handle = open(path_for_save, 'wb')
         ftp.retrbinary(f'RETR {file}', handle.write)
 
+def load_one_source(source,files,ftp):
+    # Скачать все файлы по конкретному источнику
+    source_files = sorted([i for i in files if i.find(source) != -1])
+
+    for file in source_files:
+        path_for_save = os.path.join(os.getcwd(), str(datetime.date.today()), source) #сохранение в одну общую папку
+        print(path_for_save)
+        path_for_save_full = os.path.join(path_for_save,file)  # сохранение в одну общую папку
+        '' if os.path.exists(path_for_save) else os.makedirs(path_for_save)
+
+        handle = open(path_for_save_full, 'wb')
+        ftp.retrbinary(f'RETR {file}', handle.write)
 
 files,ftp = ftp_connect()
 sources = sorted(set([i.split('&')[-1].replace('.jpeg','') for i in files]))
@@ -40,4 +52,4 @@ create_folders(sources)
 for source in sources:
     load_in_folder(source, files,ftp)
 
-
+load_one_source('IMLS',files,ftp)
