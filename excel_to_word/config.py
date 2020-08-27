@@ -13,16 +13,16 @@ DOCX_FOLDER_NO_FOOTER_4_COL = 'DOCX\DOCX_NO_FOOTER_4_COL'
 EXCEL_FOLDER = 'XLSX'
 
 # Начальные номера таблиц  используемые при замене номеров
-CITY_TABLE_START_NUM = 1.2
-CITYSOURCE_TABLE_START_NUM = 1.2
-SKLAD_TABLE_START_NUM = 2.2
-SKLADSOURDE_TABLE_START_NUM = 2.2
+CITY_TABLE_START_NUM = 1.4          #номер таблицы в фомате число - точка - число
+CITYSOURCE_TABLE_START_NUM = 1.12   #номер таблицы в фомате число - точка - число
+SKLAD_TABLE_START_NUM = 2.4         #номер таблицы в фомате число - точка - число
+SKLADSOURDE_TABLE_START_NUM = 2.12  #номер таблицы в фомате число - точка - число
 
 # Условие, менять ли номера таблиц в ворд файле (еслиномера меняются, то сноски в названии таблиц удаляются)
 CITY_TABLE_NUM_EDIT = False
 CITYSOURCE_TABLE_NUM_EDIT = False
-SKLAD_TABLE_NUM_EDIT = False
-SKLADSOURDE_TABLE_NUM_EDIT = False
+SKLAD_TABLE_NUM_EDIT = True
+SKLADSOURDE_TABLE_NUM_EDIT = True
 
 #Параметры высоты ячеек используемых в шаблонах ворд
 HEIGHT_OF_CELL_IN_HEADER = 26

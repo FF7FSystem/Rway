@@ -69,7 +69,9 @@ def give_table_num_list(data):
 
     if start_num:   #Если стартовый номер не определен, то делаем списки заполненные None, Иначе находим строки с номерами таблиц и формируем список номеров
         num_paragraphs = [num for num, i in enumerate(data.word_data.paragraphs) if i.text.find('Таблица ') != -1]  # Номера строк с номером таблицы
-        paragraphs_values = ['{:.1f}'.format(start_num + (i / 10)) for i in range(len(data.word_all_tables))]       # список новых номеров для замены
+        split_start_num = [int(i) for i in str(start_num).split('.')]
+        paragraphs_values = [f'{split_start_num[0]}.{split_start_num[1]+i}' for i in range(len(data.word_all_tables))]  # список новых номеров для замены
+        # paragraphs_values = ['{:.1f}'.format(start_num + (i / 10)) for i in range(len(data.word_all_tables))]       # список новых номеров для замены
     else:
         num_paragraphs = paragraphs_values =  [None for i in range(len(data.word_all_tables))]
     return num_paragraphs, paragraphs_values
@@ -386,7 +388,7 @@ def join_exceldata_and_docxtable(current_tab):
          edit_date_and_item_in_parag(current_tab,target ='item')
     if current_tab.num_paragraphs_for_edit_date:
         edit_date_and_item_in_parag(current_tab,target ='date') #Редактирование даты в строке перед таблицей
-    if current_tab.doc_table_num and current_tab.doc_table_value: #в описании данной функции
+    if current_tab.doc_table_value: #в описании данной функции
         edit_date_and_item_in_parag(current_tab, target='table_num')  # Редактирование даты в строке перед таблицей
     if not current_tab.source:
         edit_head_in_doc_table(current_tab.select_doc_table,excel_data)
