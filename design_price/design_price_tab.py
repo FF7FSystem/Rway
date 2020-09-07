@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from config_design_price_tab import * #импорт tab_name_dict,target_sheet
-
+from termcolor import cprint
 
 def tab_slices(tab_data):
     """
@@ -14,12 +14,11 @@ def tab_slices(tab_data):
     result = []
     temp = []
     tab_fl = False
-    for num,data  in tab_data.iterrows():
+    for num  in range(len(tab_data)):
         str_row = ''.join([str(i) for i in (tab_data.iloc[num])])
         if 'Средневзвешенные цены ' in  str_row:
             temp.append(num)
             tab_fl = True
-
         elif str_row =='' and tab_fl:
             temp.append(num)
             tab_fl = False
@@ -48,11 +47,10 @@ def select_required_col(tab,tab_name):
     try:
         lead_col=tab_name_dict[tab_name]['lead_col']
     except KeyError:
-        print("""Не найдено имя таблицы в словаре конфига (название  текущей таблицы отличается
-                 от словарного на пробел в конце строки, точку  и т.д.... (удачи)""")
+        print(f"Не найдено имя таблицы  (указано ниже) в словаре конфига (название  текущей таблицы отличается \
+        от словарного на пробел в конце строки, точку  и т.д.... (удачи) \n '{tab_name}'" )
 
-    col_num = [i for i in range(len(tab.columns)) if lead_col in tab.iloc[:, i].to_list()]
-
+    col_num = [i for i in range(len(tab.columns)) if lead_col in list(tab.iloc[:, i])]
     col_num.insert(0, 0)
     return tab.iloc[1:, col_num]
 
@@ -85,12 +83,13 @@ def prepare_tab(current_tab):
     :param current_tab: срез из Эксель файла
     :return: список: имя таблицы, таблица (ДатаФрейм)
     """
-    tab_name = ''.join(current_tab.iloc[0]).strip() #Имя таблицы
+    tab_name = ''.join(current_tab.iloc[0]).strip() #Имя таблицы полностью
+    tab_name_no_date = [key for key in tab_name_dict if key in tab_name][0] #имя таблицы без даты (берется первое частичное совпадение названия с ключем словаря)
     new_tab = drop_empty_col(current_tab) # Удаление пустых столбцов
     new_tab = new_tab.replace(' – ', 0) #Заменить прочерки
     new_tab = new_tab.replace(' - ', 0) #Заменить прочерки
-    new_tab = select_required_col(new_tab,tab_name)  #выбираются нужные колонки
-    new_tab = rename_head(new_tab,tab_name)          #переименовываются столбцы
+    new_tab = select_required_col(new_tab,tab_name_no_date)  #выбираются нужные колонки
+    new_tab = rename_head(new_tab,tab_name_no_date)          #переименовываются столбцы
     new_tab = drop_empty_row(new_tab)       #удаляются строки не сожержыщие  значения в колонках от второй и т.д.
     return [tab_name,new_tab]
 
@@ -147,7 +146,7 @@ if __name__ == '__main__':
     # main('Шаблон_ЗУ_Мск.xlsx')
     # main('Шаблон_ЗУ_МО.xlsx')
     # main('Шаблон_ЗУ_регионы.xlsx')
-    main('Шаблон_ЗУ_СПБ.xlsx')
+    main('Шаблон_ЗУ_МО.xlsx')
 
 '''
 1  - не соединяются таблицы, причина, разные первые столюбцы, по которым соединяется
