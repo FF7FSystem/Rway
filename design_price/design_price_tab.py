@@ -12,18 +12,21 @@ def tab_slices(tab_data):
     :return: список, содержащий список начала и конца таблицы, например  [[6, 22], [26, 42], [75, 90], [96, 113]]
     """
     result = []
-    temp = []
+    temp = []   #Временный список где первое число, это номер строки начала таблицы, второе число, номер строки последней в таблице
     tab_fl = False
     for num  in range(len(tab_data)):
         str_row = ''.join([str(i) for i in (tab_data.iloc[num])])
-        if 'Средневзвешенные цены ' in  str_row:
-            temp.append(num)
-            tab_fl = True
-        elif str_row =='' and tab_fl:
-            temp.append(num)
-            tab_fl = False
-            result.append(temp)
-            temp = []
+        for tab_name in tab_name_dict:
+            if tab_name in  str_row and not temp: #Если название таблицы есть в строке и временный список пуст (не содержит номера первой строки таблицы)
+                temp.append(num)
+                tab_fl = True
+                break
+            elif str_row =='' and tab_fl and temp: #Если таблица окончилась т.е. посшли пустые строки и временный список не пуст (не содержит номер первой строки таблицы)
+                temp.append(num)
+                tab_fl = False
+                result.append(temp)
+                temp = []
+                break
     return result
 
 def drop_empty_col(tab):
@@ -83,7 +86,7 @@ def prepare_tab(current_tab):
     :param current_tab: срез из Эксель файла
     :return: список: имя таблицы, таблица (ДатаФрейм)
     """
-    tab_name = ''.join(current_tab.iloc[0]).strip() #Имя таблицы полностью
+    tab_name = ''.join([str(i)for i in current_tab.iloc[0]]).strip()  # Имя таблицы полностью
     tab_name_no_date = [key for key in tab_name_dict if key in tab_name][0] #имя таблицы без даты (берется первое частичное совпадение названия с ключем словаря)
     new_tab = drop_empty_col(current_tab) # Удаление пустых столбцов
     new_tab = new_tab.replace(' – ', 0) #Заменить прочерки
@@ -135,6 +138,7 @@ def main(excel_file_path):
     """
     all_tab=load_excel_content(excel_file_path) #Загрузка контента эксель файла
     slices = tab_slices(all_tab)    #Поиск отдельных таблиц по ключевому слову. Возвращает список "срезов" для каждой таблицы в виде списка.
+    print(slices)
     tab_list = [prepare_tab(all_tab.iloc[begin:end]) for begin,end in slices]   #Каждую таблицу форматирует и берет только данные о ценах
     result_tab_dict = bond_same_tab(tab_list)   #Таблицы с одинаковыми названиями склеиваются
     if save_in_file:                            #Для отладки (Запись результирующих таблиц в эксель файл)
@@ -146,7 +150,8 @@ if __name__ == '__main__':
     # main('Шаблон_ЗУ_Мск.xlsx')
     # main('Шаблон_ЗУ_МО.xlsx')
     # main('Шаблон_ЗУ_регионы.xlsx')
-    main('Шаблон_ЗУ_МО.xlsx')
+    # main('Шаблон_ЗУ_МО.xlsx')
+    main(r'C:\Users\user1\Desktop\Шаблон_КН_Регионы_Спб_типо_олд.xlsx')
 
 '''
 1  - не соединяются таблицы, причина, разные первые столюбцы, по которым соединяется
