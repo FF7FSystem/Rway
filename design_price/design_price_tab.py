@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
-from config_design_price_tab import * #импорт tab_name_dict,target_sheet
-from termcolor import cprint
+# from config_design_price_tab import * #импорт tab_name_dict,target_sheet
+import json
+
+save_in_file,tab_name_dict,target_sheet = None,None,None
 
 def tab_slices(tab_data):
     """
@@ -56,6 +58,25 @@ def select_required_col(tab,tab_name):
     col_num = [i for i in range(len(tab.columns)) if lead_col in list(tab.iloc[:, i])]
     col_num.insert(0, 0)
     return tab.iloc[1:, col_num]
+
+def load_config():
+    """
+    Загрузить файл конфига. Данные из конфига записать в глобальниые переменнные, чтобы не протаскивать в функции
+    :return: Ничего
+    """
+    try:
+        with open('config_design_price_tab.json', encoding='utf8') as inp:  #Загрузка конфига
+            conf = json.load(inp)
+    except Exception as e:
+        print('Файл конфига отсутствует/не открывается!')
+        raise e
+    #Переназначение глобальных переменных
+    global save_in_file
+    global target_sheet
+    global tab_name_dict
+    save_in_file = conf['save_in_file']
+    target_sheet = conf['target_sheet']
+    tab_name_dict = conf['tab_name_dict']
 
 def rename_head(tab,tab_name):
     """
@@ -136,9 +157,9 @@ def main(excel_file_path):
     :param excel_file_path: путь к фалу Эксель, который необходимо  обрадотать
     :return: Словарь
     """
+    load_config() #Загрузка конфига в глобальные переменные
     all_tab=load_excel_content(excel_file_path) #Загрузка контента эксель файла
     slices = tab_slices(all_tab)    #Поиск отдельных таблиц по ключевому слову. Возвращает список "срезов" для каждой таблицы в виде списка.
-    print(slices)
     tab_list = [prepare_tab(all_tab.iloc[begin:end]) for begin,end in slices]   #Каждую таблицу форматирует и берет только данные о ценах
     result_tab_dict = bond_same_tab(tab_list)   #Таблицы с одинаковыми названиями склеиваются
     if save_in_file:                            #Для отладки (Запись результирующих таблиц в эксель файл)
@@ -150,8 +171,8 @@ if __name__ == '__main__':
     # main('Шаблон_ЗУ_Мск.xlsx')
     # main('Шаблон_ЗУ_МО.xlsx')
     # main('Шаблон_ЗУ_регионы.xlsx')
-    # main('Шаблон_ЗУ_МО.xlsx')
-    main(r'C:\Users\user1\Desktop\Шаблон_КН_Регионы_Спб_типо_олд.xlsx')
+    main('Шаблон_ЗУ_МО.xlsx')
+    # main(r'C:\Users\user1\Desktop\Шаблон_КН_Регионы_Спб_типо_олд.xlsx')
 
 '''
 1  - не соединяются таблицы, причина, разные первые столюбцы, по которым соединяется
