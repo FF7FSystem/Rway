@@ -3,7 +3,7 @@ import numpy as np
 # from config_design_price_tab import * #импорт tab_name_dict,target_sheet
 import json
 
-save_in_file,tab_name_dict,target_sheet = None,None,None
+save_in_file,tab_name_dict,target_sheets = None,None,None
 
 def tab_slices(tab_data):
     """
@@ -72,10 +72,10 @@ def load_config():
         raise e
     #Переназначение глобальных переменных
     global save_in_file
-    global target_sheet
+    global target_sheets
     global tab_name_dict
     save_in_file = conf['save_in_file']
-    target_sheet = conf['target_sheet']
+    target_sheets = conf['target_sheets']
     tab_name_dict = conf['tab_name_dict']
 
 def rename_head(tab,tab_name):
@@ -128,19 +128,33 @@ def bond_same_tab(tab_list):
         if name not in result_tab_dict:
             result_tab_dict[name]=current_tab.reset_index(drop=True)
         else:
-            result_tab_dict[name] = result_tab_dict[name].merge(current_tab,how='outer')#.fillna(0)
+            try:
+                result_tab_dict[name] = result_tab_dict[name].merge(current_tab,how='outer')#.fillna(0)
+            except Exception as e:
+                print(f'''При попытке "склеивания" таблиц (с одинаковым названием), не найдена колонка (название колонки) присутствующая в обеих таблицах,
+ориентировочно вот этот столбец "{current_tab.columns[0]}" не равен "{result_tab_dict[name].columns[0]}"''')
+                raise e
     return result_tab_dict
 
 def load_excel_content(excel_file_path):
     """
-    Загружает конкретную вкладку (вкладка указана в конфиге) эксель файла.
+    Загружает вкладки (указаны в конфиге target_sheets) эксель файла.
+    В каждом датафрейме, полученном загрузкой вкладки, необходимо переименовать колонки на 0,1,2,3 и т.д.
+    чтобы при формировании единого файла (методом append) один датафрейм был под другим без смещения (если в разных
+    таблицах одинакове столцы, данные из них помещаются одни под другие, пополоняя столбце, если столбцы назваются
+    поразному, то новый столбез добавляется в конец, расширяя таблицу)
     :param excel_file_path: путь до файла
     :return: возвращает контент вкладки эксель Датафрейм
     """
+    result_table=pd.DataFrame()
     excel_data = pd.ExcelFile(excel_file_path)
-    sheets = excel_data.sheet_names #список закладок
-    index_sheet = sheets.index(target_sheet)   #Индекс вклдаки Верстка_цены
-    return pd.read_excel(excel_file_path, index_sheet, na_filter=False)
+    sheets = excel_data.sheet_names
+    index_sheets =[sheets.index(sheet) for sheet in sheets if sheet in target_sheets] #список индексов закладок в эксель, соответствующие закладкам указанным в конфиге.
+    for ind_sheet in index_sheets: #перебор закладок
+        this_sheet_data = pd.read_excel(excel_data, ind_sheet, na_filter=False) #Загрузка вкладки в Datafreame
+        this_sheet_data =  this_sheet_data.rename(columns={col:num for num,col in enumerate(this_sheet_data.columns)}) #Переименование колонок
+        result_table = result_table.append(this_sheet_data,ignore_index=True).fillna(0) #добавление в результирующий DataFrame
+    return result_table
 
 def save_result_in_file(result_tab_dict):
     sheets_num=1
@@ -160,6 +174,7 @@ def main(excel_file_path):
     load_config() #Загрузка конфига в глобальные переменные
     all_tab=load_excel_content(excel_file_path) #Загрузка контента эксель файла
     slices = tab_slices(all_tab)    #Поиск отдельных таблиц по ключевому слову. Возвращает список "срезов" для каждой таблицы в виде списка.
+    print(slices)
     tab_list = [prepare_tab(all_tab.iloc[begin:end]) for begin,end in slices]   #Каждую таблицу форматирует и берет только данные о ценах
     result_tab_dict = bond_same_tab(tab_list)   #Таблицы с одинаковыми названиями склеиваются
     if save_in_file:                            #Для отладки (Запись результирующих таблиц в эксель файл)
@@ -171,8 +186,8 @@ if __name__ == '__main__':
     # main('Шаблон_ЗУ_Мск.xlsx')
     # main('Шаблон_ЗУ_МО.xlsx')
     # main('Шаблон_ЗУ_регионы.xlsx')
-    main('Шаблон_ЗУ_МО.xlsx')
-    # main(r'C:\Users\user1\Desktop\Шаблон_КН_Регионы_Спб_типо_олд.xlsx')
+    # main('Шаблон_ЗУ_МО.xlsx')
+    main(r'C:\Users\user1\Desktop\Шаблон_КН_МСК_типо_олд.xlsx')
 
 '''
 1  - не соединяются таблицы, причина, разные первые столюбцы, по которым соединяется
