@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-# from config_design_price_tab import * #импорт tab_name_dict,target_sheet
 import json
 
 save_in_file,tab_name_dict,target_sheets = None,None,None
@@ -13,6 +12,7 @@ def tab_slices(tab_data):
     :param tab_data: контент эксель файла (Датафрейм)
     :return: список, содержащий список начала и конца таблицы, например  [[6, 22], [26, 42], [75, 90], [96, 113]]
     """
+    # print(tab_data.iloc[650])
     result = []
     temp = []   #Временный список где первое число, это номер строки начала таблицы, второе число, номер строки последней в таблице
     tab_fl = False
@@ -153,7 +153,7 @@ def load_excel_content(excel_file_path):
     for ind_sheet in index_sheets: #перебор закладок
         this_sheet_data = pd.read_excel(excel_data, ind_sheet, na_filter=False) #Загрузка вкладки в Datafreame
         this_sheet_data =  this_sheet_data.rename(columns={col:num for num,col in enumerate(this_sheet_data.columns)}) #Переименование колонок
-        result_table = result_table.append(this_sheet_data,ignore_index=True).fillna(0) #добавление в результирующий DataFrame
+        result_table = result_table.append(this_sheet_data,ignore_index=True).fillna('') #добавление в результирующий DataFrame
     return result_table
 
 def save_result_in_file(result_tab_dict):
@@ -187,7 +187,8 @@ if __name__ == '__main__':
     # main('Шаблон_ЗУ_МО.xlsx')
     # main('Шаблон_ЗУ_регионы.xlsx')
     # main('Шаблон_ЗУ_МО.xlsx')
-    main(r'C:\Users\user1\Desktop\Шаблон_КН_МСК_типо_олд.xlsx')
+    # main(r'C:\Users\user1\Desktop\Шаблон_КН_МСК_типо_олд.xlsx')
+    pass
 
 '''
 1  - не соединяются таблицы, причина, разные первые столюбцы, по которым соединяется
