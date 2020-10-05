@@ -57,10 +57,10 @@ table_style = {'margin': '1%'}
 thead_style = {'font-weight': 'bold', 'text-decoration': 'underline'}
 td_1_style = {'width': '100%', 'vertical-align': 'top'}
 td_2_style = {'width': '40%'}
-button_style = {'margin-top': '25px', 'margin-bottom': '25px','font-weight': 'bold'}
-span_style = {'margin-left': '25px', 'margin-right': '25px', }
+button_style = {'margin-top': '25px', 'margin-bottom': '5px','margin-left': '25px','font-weight': 'bold'}
+span_style = {'margin-left': '25px', 'margin-right': '25px', 'margin-top': '15px'}
 div_no_info_tab_4_style = {'margin-left': '25px', 'margin-right': '25px', 'margin-top': '25px', 'fontWeight': 'bold'}
-input_style  = {'margin-left': '25px', 'margin-right': '25px', }
+input_style  = {'margin-left': '25px', 'margin-right': '25px','border': '1px solid' }
 message_div_style = {'margin-left': '25px','color':'tomato'}
 
 STATUS_D = {1: ' Исполняется', 2: ' Выполнена', 3: ' Ошибка выполнения', 0: ' К исполнению', 4: ' Парсинг не запущен'} #Словарь перевода состояния парсинга задач
@@ -377,10 +377,14 @@ def render_content(tab):
         #Формирует 5-ю вкладку "Произвольное задание" на которой размещены поле для ввода, кнопка, подчеркивание
         # и основной Div блок, в котором отражается либо предупреждение, либо  таблицы-графики, продробнее в  output-state
         return html.Div(children=[
+            html.Span(children=f'Найти ранее спарсинныую статистику по заданию или Загрузить данные из базы SQL.', style=span_style),
+            html.Div(),
             dcc.Input(id='input-1-state', type='text', placeholder=f"формат {CONFIG.TASK_NUM}",style=input_style),
-            html.Button(id='submit-button-state', n_clicks=0, children='Поиск',style=button_style),
+            html.Button(id='submit-button-state', n_clicks=0, children='Найти',style=button_style),
+            html.Button('Загрузить', id='submit-button-state_2', n_clicks=0, style=button_style),
             html.Hr(),
-            html.Div(id='output-state')
+            html.Div(id='output-state'),
+            html.Div(id='output-state_2')
                         ]
 
         )
@@ -528,6 +532,30 @@ def displayClick(btn1):
         button_msg = 'Загрузить'
     return html.Div(button_msg)
 
+@app.callback(Output('output-state_2', 'children'), [Input('submit-button-state_2', 'n_clicks')], [State('input-1-state', 'value')])
+def update_output(n_clicks, input1):
+    """
+    Содержимое input1 проверяется на правильность заполенния. Если input1 заполнено, вызывается подпроцесс
+    загрузки статистических данных из SQL и сохраняет данные в файл.
+    :param n_clicks:
+    :param input1: Номер задачи из поля input
+    :return:
+    """
+    if input1:
+        is_task = re.findall('[\d]{4}-[\d]{4}$', input1)
+        try:
+            is_task=is_task[0]
+        except:
+            return html.Div(children='Предупреждение о загрузке: Номер задачи неверного формата (верный 0000-0000).',style=message_div_style)
+        if is_task:
+            subprocess.Popen([sys.executable, f'parsing_manage.py',is_task])
+            return html.Div(children='Загрузка пошла.... черпаем...', style=message_div_style)
+
+        else:
+            return html.Div(children='Предупреждение о загрузке: Что-то пошло не так...',style=message_div_style)
+
+    else:
+        return html.Div(children='Предупреждение о загрузке: Номер задачи не указан.',style=message_div_style)
 
 @app.callback(Output('output-state', 'children'), [Input('submit-button-state', 'n_clicks')], [State('input-1-state', 'value')])
 def update_output(n_clicks, input1):
@@ -550,7 +578,7 @@ def update_output(n_clicks, input1):
         try:
             is_task=is_task[0]
         except:
-            return html.Div(children='Предупреждение: Номер задачи неверного формата (верный 0000-0000).',style=message_div_style)
+            return html.Div(children='Предупреждение о поиске: Номер задачи неверного формата (верный 0000-0000).',style=message_div_style)
         if is_task:
             if input1 != CONFIG.TASK_NUM: #в input1 номер не равный номеру текущего задания
                 search_task_data, other_task_data = data_in_all_json_true(input1)
@@ -562,10 +590,10 @@ def update_output(n_clicks, input1):
             elif input1 == CONFIG.TASK_NUM: #в input1 номер текущего задания
                 return create_table_page(this_task_data, past_task_data, past_task_data_cut)
         else:
-            return html.Div(children='Предупреждение: Что-то пошло не так...',style=message_div_style)
+            return html.Div(children='Предупреждение о поиске: Что-то пошло не так...',style=message_div_style)
 
     else:
-        return html.Div(children='Предупреждение: Номер задачи не указан.',style=message_div_style)
+        return html.Div(children='Предупреждение о поиске: Номер задачи не указан.',style=message_div_style)
 
 
 if __name__ == '__main__':

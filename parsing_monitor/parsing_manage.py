@@ -3,11 +3,13 @@ import pasing_verification_char
 from termcolor import cprint
 import json
 import parse_monitor_config as CONFIG
-
+import sys
 
 def direct_order():
     """
     Оснавная функция упорядочивания получения статистических данных.
+    TASK_NUM - номер задания. берется из файла конфига или из командной строки если этот файл запускался так
+    (python parsing_manage.py 0001-0771). Оба варианта работа востребованы (из скрипта parse_monitor).
     1)prepare_data  - Получение списка задач в задании с некоторыми предварительными хар-ками, или по списку задач получения предварительных хар-к
     2)filtered_prepare_data - Из предварительного списка задач отфильровываются задачи запущенные несколько раз,
         (задачи запущенные по одному и тому же источнику, берутся задачи с максимальным количество спарсенных предложений)
@@ -20,13 +22,12 @@ def direct_order():
     номера задач передается списком типа ['0001-0646-0001','0001-0646-0002','0001-0646-0003']
     :return: ничего не возвращает, но формирует файл
     """
-    # task_num = '0001-0756'
-    # task_num = ['0001-0661-0036', '0001-0661-0035']
-
-    # for_connect = 'DRIVER={SQL Server};SERVER=10.199.13.60;DATABASE=rway;UID=vdorofeev;PWD=VD12345#'  # Настройки подключения к базе RWAY, будет использовано для подключения в синхронной и асинхронной функциях
-    # prepare_data = pasing_verification_char.task_list_prepare(task_num=task_num, for_connect=CONFIG.FOR_CONNECT)
-
-    prepare_data = pasing_verification_char.task_list_prepare(task_num=CONFIG.TASK_NUM, for_connect=CONFIG.FOR_CONNECT)
+    try:
+        task_from_cmd = sys.argv[1] # Нати переданнные в командной строке аргументы при запуске (номер задания)
+    except:
+        task_from_cmd = False   # Если  В командной строке  номер задания не передавался
+    TASK_NUM =  task_from_cmd if task_from_cmd else CONFIG.TASK_NUM # Если номер задания передан в командной строке,  иначе из конфига
+    prepare_data = pasing_verification_char.task_list_prepare(task_num=TASK_NUM, for_connect=CONFIG.FOR_CONNECT)
     filtered_prepare_data = pasing_verification_char.excluding_task(prepare_data)
     pasing_verification_char.main(filtered_prepare_data, CONFIG.FOR_CONNECT)
     cprint('Файл с результатами парсинга:', 'yellow', end=' ')
