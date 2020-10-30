@@ -67,11 +67,17 @@ def kill_proc_tree(pid, including_parent=True):
     parent = psutil.Process(pid) #Процесс
     children = parent.children(recursive=True) #Подпроцессы основного процесса
     for child in children:
-        child.kill()
+        try:
+            child.kill()
+        except psutil.NoSuchProcess:
+            print(f'Процесс {pid} закрыть неудалось')
     gone, still_alive = psutil.wait_procs(children, timeout=5)
     if including_parent:
-        parent.kill()
-        parent.wait(5)
+        try:
+            parent.kill()
+            parent.wait(5)
+        except psutil.NoSuchProcess:
+            print(f'Процесс {pid} закрыть неудалось')
     cprint((f'Приложение остановлено ПИД процесса {pid}', time.strftime("%H:%M:%S %d.%m.%Y", time.localtime())), 'red')
 
 
@@ -86,6 +92,7 @@ def go_go_go():
     :return: ничего не возвращает
     """
     current_pid = start_app() #Запуск монитора приложения монитора
+    time.sleep(3)
     try: #Если я прерву задачу с клавиатуры или другим способом, то дерево процессов запущенного монитора убивается (иначу они продолжат функционировать)
         while current_pid:  #Если текущий процесс имет номер пид
             last_task = get_last_task() #Определить номер самого нового задания парсинга
