@@ -13,14 +13,15 @@ DOCX_FOLDER_NO_FOOTER_4_COL = 'DOCX\DOCX_NO_FOOTER_4_COL'
 EXCEL_FOLDER = 'XLSX'
 
 # Начальные номера таблиц  используемые при замене номеров
-CITY_TABLE_START_NUM = 1.4          #номер таблицы в фомате число - точка - число
-CITYSOURCE_TABLE_START_NUM = 1.12   #номер таблицы в фомате число - точка - число
-SKLAD_TABLE_START_NUM = 2.4         #номер таблицы в фомате число - точка - число
-SKLADSOURDE_TABLE_START_NUM = 2.12  #номер таблицы в фомате число - точка - число
+# если номера таблиц меняются, то Сноска в номере (для файлов источников) удалится (либо не меняй, либо делай сноску руками)
+CITY_TABLE_START_NUM = 1.6          #номер таблицы в фомате число - точка - число
+CITYSOURCE_TABLE_START_NUM = 1.22   #номер таблицы в фомате число - точка - число
+SKLAD_TABLE_START_NUM = 2.6         #номер таблицы в фомате число - точка - число
+SKLADSOURDE_TABLE_START_NUM = 2.22  #номер таблицы в фомате число - точка - число
 
 # Условие, менять ли номера таблиц в ворд файле (еслиномера меняются, то сноски в названии таблиц удаляются)
-CITY_TABLE_NUM_EDIT = False
-CITYSOURCE_TABLE_NUM_EDIT = False
+CITY_TABLE_NUM_EDIT = True
+CITYSOURCE_TABLE_NUM_EDIT = True
 SKLAD_TABLE_NUM_EDIT = True
 SKLADSOURDE_TABLE_NUM_EDIT = True
 
