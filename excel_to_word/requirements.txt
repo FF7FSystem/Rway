@@ -1,6 +1,6 @@
 docx==0.2.4
 lxml==4.5.2
-numpy==1.19.1
+numpy==1.22.0
 pandas==1.1.1
 Pillow==7.2.0
 progressbar==2.5
